@@ -314,7 +314,7 @@ DiagnosticManager.prototype = {
 }
 
 $(function() {
-  var editor = CodeMirror($('#repl-editor')[0], {
+  var editor = CodeMirror($('#tryit-editor')[0], {
     value: (window.localStorage["code"] ||
       "class A;\n  def @foo : Symbol;\n\n  def @foo : Integer;\nend"),
 
@@ -349,9 +349,9 @@ $(function() {
   window.d = diagnostics;
   window.h = highlights;
 
-  $("#repl-output").hide();
-  $("#repl-output .close").click(function() {
-    $("#repl-output").hide();
+  $("#tryit-output").hide();
+  $("#tryit-output .close").click(function() {
+    $("#tryit-output").hide();
   });
 
   function analyze(gotoError) {
@@ -402,7 +402,7 @@ $(function() {
   function compile() {
     /* Reset */
     diagnostics.clear();
-    $("#repl-output").hide().removeClass("alert-success alert-error");
+    $("#tryit-output").hide().removeClass("alert-success alert-error");
 
     /* Compile */
     var code = editor.getValue(), result;
@@ -412,15 +412,15 @@ $(function() {
     try {
       result = foundryProcess(code, true);
     } catch(e) {
-      $("#repl-output .output").text("Shit broke really hard: " + e.toString());
-      $("#repl-output").addClass("alert-error").show();
+      $("#tryit-output .output").text("Shit broke really hard: " + e.toString());
+      $("#tryit-output").addClass("alert-error").show();
       return;
     }
 
     /* Display */
     if(result.type == "output") {
-      $("#repl-output .output").text(result.value);
-      $("#repl-output").addClass("alert-success").show();
+      $("#tryit-output .output").text(result.value);
+      $("#tryit-output").addClass("alert-success").show();
     } else if(result.type == "diagnostics") {
       result.value.forEach(function(desc, index) {
         var diagnostic = diagnostics.addDiagnostic(desc.message, desc.locations);
@@ -430,11 +430,11 @@ $(function() {
         }
       });
     } else if(result.type == "error") {
-      $("#repl-output .output").text("Shit broke in a mundane way: " + result.value);
-      $("#repl-output").addClass("alert-error").show();
+      $("#tryit-output .output").text("Shit broke in a mundane way: " + result.value);
+      $("#tryit-output").addClass("alert-error").show();
     }
   };
 
   analyze(true);
-  $("#repl-run").click(compile);
+  $("#tryit-run").click(compile);
 });
