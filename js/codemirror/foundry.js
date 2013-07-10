@@ -8,13 +8,13 @@ CodeMirror.defineMode('foundry', function(config) {
     "true", "false", "nil", "self", "and", "or", "not", "let", "mut", "while",
     "do", "if", "elsif", "then", "else", "match", "end", "as", "meta", "type",
     "public", "dynamic", "package", "class", "mixin", "iface", "def", "return",
-    "invokeprimitive"
+    "new", "invokeprimitive"
   ]);
   var indentWords = lookupObj([
-    "then", "do", "class", "package", "mixin", "iface"
+    "then", "do", "class", "package", "mixin", "iface", "else"
   ]);
   var dedentWords = lookupObj([
-    "end", "}"
+    "else", "end", "}"
   ]);
 
   function indent(state) {
@@ -30,7 +30,8 @@ CodeMirror.defineMode('foundry', function(config) {
       return {
         indentation:  0,
         indentedLine: false,
-        inDef:        false
+        inDef:        false,
+        inFname:      false
       };
     },
 
@@ -47,9 +48,15 @@ CodeMirror.defineMode('foundry', function(config) {
       var wasInDef = state.inDef;
       state.inDef = false;
 
-      if(stream.match(/([+*\/%&|<>~-]|<<|>>>?)=?|==|<=>|[+~-]@/, true)) {
-        if(wasInDef) {
-          indent(state);
+      var wasInFname = state.inFname;
+      state.inFname = false;
+
+      if(stream.match(/[+~-]@|([+*\/%&|<>~-]|<<|>>>?)=?|==|<=>/, true)) {
+        if(wasInDef || wasInFname) {
+          if(wasInDef) {
+            indent(state);
+          }
+
           return "variable";
         }
 
@@ -58,9 +65,9 @@ CodeMirror.defineMode('foundry', function(config) {
         return "operator";
       } else if(stream.match(/[{}\[\]()]/, true)) {
         if(stream.current() == "{") {
-          indent();
+          indent(state);
         } else if(stream.current() == "}" && state.indentedLine) {
-          dedent();
+          dedent(state);
         }
 
         return "bracket";
@@ -73,7 +80,7 @@ CodeMirror.defineMode('foundry', function(config) {
       } else if(stream.match(/(\\[A-Za-z_]|[A-Z])[A-Za-z_0-9]*/, true)) {
         return "variable-2";
       } else if(match = stream.match(/([a-z_][A-Za-z_0-9]*)/, true)) {
-        if(keywords[match[0]] && !wasInDef) {
+        if(keywords[match[0]] && !wasInDef && !wasInFname) {
           if(indentWords[stream.current()]) {
             indent(state);
           } else if(dedentWords[stream.current()] && state.indentedLine) {
@@ -86,18 +93,21 @@ CodeMirror.defineMode('foundry', function(config) {
 
           return "keyword";
         } else {
-          if(wasInDef) {
-            indent(state);
+          if(wasInDef || wasInFname) {
+            if(wasInDef) {
+              indent(state);
+            }
+
             return "variable";
           } else {
             return null;
           }
         }
-      } else if(stream.match(/:(([+*\/%&|<>~-]|<<|>>>?)=?|==|<=>|[+~-]@)/, true) ||
+      } else if(stream.match(/:([+~-]@|([+*\/%&|<>~-]|<<|>>>?)=?|==|<=>)/, true) ||
                 stream.match(/:[A-Za-z_][A-Za-z_0-9]*/)) {
         return "atom";
       } else if(stream.eat('.')) {
-        state.inDef = true;
+        state.inFname = true;
 
         return null;
       } else if(stream.match(/[=,:;]|->|=>/, true)) {
@@ -119,7 +129,7 @@ CodeMirror.defineMode('foundry', function(config) {
       }
     },
 
-    electricChars: "}d", /* end */
+    electricChars: "}de", /* enD, elsE */
     lineComment:   "#"
   };
 });
