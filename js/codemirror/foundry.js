@@ -51,7 +51,7 @@ CodeMirror.defineMode('foundry', function(config) {
       var wasInFname = state.inFname;
       state.inFname = false;
 
-      if(stream.match(/[+~-]@|([+*\/%&|<>~-]|<<|>>>?)=?|==|<=>/, true)) {
+      if(stream.match(/[+~-]@|<<|>>|\*\*|([+*^\/%&|<>~-])=?|==|<=>/, true)) {
         if(wasInDef || wasInFname) {
           if(wasInDef) {
             indent(state);
@@ -103,7 +103,7 @@ CodeMirror.defineMode('foundry', function(config) {
             return null;
           }
         }
-      } else if(stream.match(/:([+~-]@|([+*\/%&|<>~-]|<<|>>>?)=?|==|<=>)/, true) ||
+      } else if(stream.match(/:([+~-]@|<<|>>|\*\*|([+*^\/%&|<>~-])=?|==|<=>)/, true) ||
                 stream.match(/:[A-Za-z_][A-Za-z_0-9]*/)) {
         return "atom";
       } else if(stream.eat('.')) {

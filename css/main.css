@@ -24,6 +24,10 @@ h1, h2, h3, h4, h5, h6 {
   background: url(../img/underline-pink.png) repeat-x bottom;
 }
 
+.CodeMirror .diag-gutter {
+  width: 7px;
+}
+
 .CodeMirror .diag-marker {
   position: absolute;
   top: 6px;
