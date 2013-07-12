@@ -80,10 +80,11 @@ CodeMirror.defineMode('foundry', function(config) {
       } else if(stream.match(/(\\[A-Za-z_]|[A-Z])[A-Za-z_0-9]*/, true)) {
         return "variable-2";
       } else if(match = stream.match(/([a-z_][A-Za-z_0-9]*)/, true)) {
-        if(keywords[match[0]] && !wasInDef && !wasInFname) {
-          if(indentWords[stream.current()]) {
+        if(keywords[match[0]] && !wasInDef && !wasInFname ||
+            match[0] == 'self' && wasInDef) {
+          if(indentWords[match[0]]) {
             indent(state);
-          } else if(dedentWords[stream.current()] && state.indentedLine) {
+          } else if(dedentWords[match[0]] && state.indentedLine) {
             dedent(state);
           }
 
