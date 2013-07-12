@@ -342,6 +342,8 @@ $(function() {
     }
   });
 
+  editor.setSize(null, 400);
+
   var highlights  = new HighlightManager(editor);
   var diagnostics = new DiagnosticManager(highlights);
 
@@ -400,6 +402,11 @@ $(function() {
   })
 
   function compile() {
+    function displayResult(klass, message) {
+      $("#tryit-output .output").text(message);
+      $("#tryit-output").addClass("alert-" + klass).show();
+    }
+
     /* Reset */
     diagnostics.clear();
     $("#tryit-output").hide().removeClass("alert-success alert-error");
@@ -412,15 +419,13 @@ $(function() {
     try {
       result = foundryProcess(code, true);
     } catch(e) {
-      $("#tryit-output .output").text("Shit broke really hard: " + e.toString());
-      $("#tryit-output").addClass("alert-error").show();
+      displayResult("error", "Shit broke really hard: " + e.toString())
       return;
     }
 
     /* Display */
-    if(result.type == "output") {
-      $("#tryit-output .output").text(result.value);
-      $("#tryit-output").addClass("alert-success").show();
+    if(result.type == "output") {d
+      displayResult('success', result.value);
     } else if(result.type == "diagnostics") {
       result.value.forEach(function(desc, index) {
         var diagnostic = diagnostics.addDiagnostic(desc.message, desc.locations);
@@ -430,8 +435,7 @@ $(function() {
         }
       });
     } else if(result.type == "error") {
-      $("#tryit-output .output").text("Shit broke in a mundane way: " + result.value);
-      $("#tryit-output").addClass("alert-error").show();
+      displayResult('error', "Shit broke in a mundane way: " + result.value);
     }
   };
 

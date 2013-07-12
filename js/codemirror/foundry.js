@@ -74,9 +74,9 @@ CodeMirror.defineMode('foundry', function(config) {
       } else if(stream.match(/\d+/, true) && !stream.match(/[a-zA-Z_]/)) {
         return "number";
       } else if(stream.match(/[A-Za-z_][A-Za-z_0-9]*:/, true)) {
-        return "attribute";
+        return "variable-2";
       } else if(stream.match(/@[A-Za-z_][A-Za-z_0-9]*/, true)) {
-        return "variable";
+        return "attribute";
       } else if(stream.match(/(\\[A-Za-z_]|[A-Z])[A-Za-z_0-9]*/, true)) {
         return "variable-2";
       } else if(match = stream.match(/([a-z_][A-Za-z_0-9]*)/, true)) {
@@ -98,7 +98,7 @@ CodeMirror.defineMode('foundry', function(config) {
               indent(state);
             }
 
-            return "variable";
+            return "attribute";
           } else {
             return null;
           }
