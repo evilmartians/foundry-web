@@ -84,6 +84,8 @@ CodeMirror.defineMode('foundry', function(config) {
             match[0] == 'self' && wasInDef) {
           if(indentWords[match[0]]) {
             indent(state);
+          } else if(match[0] == 'self' && wasInDef) {
+            indent(state);
           } else if(dedentWords[match[0]] && state.indentedLine) {
             dedent(state);
           }
