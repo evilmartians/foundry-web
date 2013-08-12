@@ -71,7 +71,7 @@ CodeMirror.defineMode('foundry', function(config) {
         }
 
         return "bracket";
-      } else if(stream.match(/\d+/, true) && !stream.match(/[a-zA-Z_]/)) {
+      } else if(stream.match(/\d+(i|[us]\d+)?/, true) && !stream.match(/[a-zA-Z_]/)) {
         return "number";
       } else if(stream.match(/[A-Za-z_][A-Za-z_0-9]*:/, true)) {
         return "variable-2";
