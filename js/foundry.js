@@ -1,1 +1,1 @@
-../../_build/src/foundry_web.js
+../../_build/src/tools/foundry_web.js
